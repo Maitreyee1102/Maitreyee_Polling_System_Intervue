@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Poll, formatSeconds } from '../types/poll.types';
 import { ChatMessage } from '../types/chat.types';
 
-import '../css/studentview.css';
+import '../css/StudentView.css';
 import { useChatPanel } from '../components/ChatPanel';
 
 type StudentViewProps = {
