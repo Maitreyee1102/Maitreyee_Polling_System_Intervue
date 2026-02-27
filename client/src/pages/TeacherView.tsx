@@ -307,7 +307,8 @@ const TeacherView: React.FC<TeacherViewProps> = ({
         )}
 
       {/* ── STICKY BOTTOM ACTION BAR ── */}
-      <div className="teacher-footer">
+      <div className="teacher-footer" 
+      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'sticky', bottom: 0, left: 0, width: '100%', background: 'white', zIndex: 10, padding: '16px 0' }}>
         {teacherTab === 'create' ? (
           <button
             className="btn btn-primary btn-ask"

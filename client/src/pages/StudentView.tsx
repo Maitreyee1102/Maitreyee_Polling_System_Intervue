@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Poll, formatSeconds } from '../types/poll.types';
+import { ChatMessage } from '../types/chat.types';
+
+import '../css/studentview.css';
+import { useChatPanel } from '../components/ChatPanel';
 
 type StudentViewProps = {
   studentName: string | null;
@@ -9,13 +13,7 @@ type StudentViewProps = {
   totalVotes: number;
   onSubmitVote: (optionId: string) => void;
   isKicked: boolean;
-  chatMessages: {
-    id: string;
-    text: string;
-    senderName: string;
-    role: 'teacher' | 'student';
-    timestamp: string;
-  }[];
+  chatMessages: ChatMessage[];
   onSendChatMessage: (text: string) => void;
   participants: { id: string; name?: string; role: 'teacher' | 'student' }[];
 };
@@ -75,14 +73,13 @@ const StudentView: React.FC<StudentViewProps> = ({
             />
           </div>
           <button
-            className="btn btn-primary"
-            type="button"
-            style={{ width: '100%', justifyContent: 'center', marginTop: 12 }}
-            onClick={() => {
-              if (tempName.trim()) {
-                setStudentName(tempName.trim());
-              }
-            }}
+              className="btn btn-primary join-session-btn"
+              type="button"
+              onClick={() => {
+                if (tempName.trim()) {
+                  setStudentName(tempName.trim());
+                }
+              }}
           >
             Join Session
           </button>
@@ -116,7 +113,7 @@ const StudentView: React.FC<StudentViewProps> = ({
 
   return (
     <>
-      <div style={{ maxWidth: 720, margin: '40px auto', padding: '0 16px' }}>
+      <div className="student-main-container">
         <div className="card">
           <div className="card-title">
             Hello, {studentName}
@@ -139,18 +136,7 @@ const StudentView: React.FC<StudentViewProps> = ({
                       <button
                         key={opt.id}
                         type="button"
-                        className="participant-item"
-                        style={{
-                          cursor: canVote ? 'pointer' : 'default',
-                          border:
-                            selectedOptionId === opt.id
-                              ? '2px solid var(--primary)'
-                              : 'none',
-                          background:
-                            selectedOptionId === opt.id
-                              ? 'var(--primary-bg)'
-                              : 'var(--light-gray)'
-                        }}
+                        className={`participant-item${selectedOptionId === opt.id ? ' selected' : ''}${canVote ? ' can-vote' : ''}`}
                         onClick={() => {
                           if (!canVote) return;
                           setSelectedOptionId(opt.id);
@@ -161,9 +147,8 @@ const StudentView: React.FC<StudentViewProps> = ({
                     ))}
                   </div>
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-primary submit-answer-btn"
                     type="button"
-                    style={{ width: '100%', justifyContent: 'center', marginTop: 16 }}
                     disabled={!canVote || !selectedOptionId}
                     onClick={handleSubmit}
                   >
@@ -196,16 +181,7 @@ const StudentView: React.FC<StudentViewProps> = ({
                           <span className={dotClass} />
                           {opt.label}
                           {opt.isCorrect && (
-                            <span
-                              style={{
-                                marginLeft: 8,
-                                fontSize: '0.7rem',
-                                fontWeight: 600,
-                                color: 'var(--success)'
-                              }}
-                            >
-                              Correct
-                            </span>
+                            <span className="correct-label">Correct</span>
                           )}
                         </div>
                         <div className="result-pct">{pct}%</div>
@@ -229,169 +205,15 @@ const StudentView: React.FC<StudentViewProps> = ({
       </div>
 
       {/* Floating chat icon and panel, mirroring the teacher view */}
-      <button
-        type="button"
-        onClick={() => setIsChatOpen((open) => !open)}
-        style={{
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          width: 48,
-          height: 48,
-          borderRadius: '50%',
-          border: 'none',
-          background: 'var(--primary)',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
-          cursor: 'pointer',
-          zIndex: 50
-        }}
-      >
-        💬
-      </button>
-
-      {isChatOpen && (
-        <div
-          className="card"
-          style={{
-            position: 'fixed',
-            bottom: 84,
-            right: 24,
-            width: 380,
-            maxHeight: 340,
-            display: 'flex',
-            flexDirection: 'column',
-            padding: 16,
-            zIndex: 49
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              marginBottom: 8,
-              gap: 4,
-              background: 'var(--light-gray)',
-              padding: 4,
-              borderRadius: 6
-            }}
-          >
-            <button
-              type="button"
-              className={`tab ${activeChatTab === 'chat' ? 'active' : ''}`}
-              style={{ flex: 1 }}
-              onClick={() => setActiveChatTab('chat')}
-            >
-              Chat
-            </button>
-            <button
-              type="button"
-              className={`tab ${activeChatTab === 'participants' ? 'active' : ''}`}
-              style={{ flex: 1 }}
-              onClick={() => setActiveChatTab('participants')}
-            >
-              Participants
-            </button>
-          </div>
-
-          {activeChatTab === 'chat' ? (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 8,
-                flex: 1
-              }}
-            >
-              <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>Chat</div>
-              <div
-                style={{
-                  flex: 1,
-                  minHeight: 120,
-                  maxHeight: 200,
-                  overflowY: 'auto',
-                  background: 'var(--light-gray)',
-                  borderRadius: 8,
-                  padding: 8,
-                  fontSize: '0.8rem'
-                }}
-              >
-                {chatMessages.map((m) => (
-                  <div key={m.id} style={{ marginBottom: 6 }}>
-                    <strong>{m.senderName}:</strong> {m.text}
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: 6 }}>
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  style={{
-                    flex: 1,
-                    padding: '8px 10px',
-                    borderRadius: 8,
-                    border: '1px solid var(--border)',
-                    fontSize: '0.8rem'
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      onSendChatMessage((e.target as HTMLInputElement).value);
-                      (e.target as HTMLInputElement).value = '';
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  style={{ padding: '6px 10px' }}
-                  onClick={() => {
-                    const input = document.querySelector(
-                      'input[placeholder="Type a message..."]'
-                    ) as HTMLInputElement | null;
-                    if (!input) return;
-                    onSendChatMessage(input.value);
-                    input.value = '';
-                  }}
-                >
-                  Send
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 8,
-                flex: 1
-              }}
-            >
-              <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>Participants</div>
-              <div
-                style={{
-                  maxHeight: 260,
-                  overflowY: 'auto',
-                  background: 'var(--light-gray)',
-                  borderRadius: 8,
-                  padding: 8,
-                  fontSize: '0.8rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 4
-                }}
-              >
-                {participants.map((p) => (
-                  <div key={p.id}>
-                    {p.name ?? (p.role === 'teacher' ? 'Teacher' : p.id)}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      {useChatPanel({
+        chatMessages,
+        onSendChatMessage,
+        isChatOpen,
+        setIsChatOpen,
+        activeChatTab,
+        setActiveChatTab,
+        participants
+      })}
     </>
   );
 };

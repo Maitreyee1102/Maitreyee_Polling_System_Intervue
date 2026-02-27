@@ -1,0 +1,109 @@
+.participants-scroll-area {
+  max-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.chat-input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+.chat-scroll-area {
+  flex: 1;
+  min-height: 120px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--light-gray);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.8rem;
+}
+.chat-section-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.chat-content-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.tab-flex {
+  flex: 1;
+}
+.chat-tabs {
+  display: flex;
+  margin-bottom: 8px;
+  gap: 4px;
+  background: var(--light-gray);
+  padding: 4px;
+  border-radius: 6px;
+}
+.chat-panel {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  width: 380px;
+  max-height: 340px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  z-index: 49;
+}
+.chat-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  cursor: pointer;
+  z-index: 50;
+}
+.correct-label {
+  margin-left: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--success);
+}
+.submit-answer-btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 16px;
+}
+.participant-item {
+  cursor: default;
+  border: none;
+  background: var(--light-gray);
+}
+
+.participant-item.selected {
+  border: 2px solid var(--primary);
+  background: var(--primary-bg);
+  cursor: pointer;
+}
+
+.participant-item.can-vote {
+  cursor: pointer;
+}
+.join-session-btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.student-main-container {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
